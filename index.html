@@ -187,10 +187,10 @@ const DEFAULTS={
   Support:{team:"LGD Gaming",stats:["watchers_taken","teamfight_participation","obs_placed"]}
 };
 /* Swiss stage payout: a team plays 4-6 Bo3 series; the payout keeps the best 2
-   games of each series, then the best 2 series of the stage (§16). Series length
+   games of each series, then the best series of the stage (§16). Series length
    is drawn per series: 2-0 or 2-1, with P(2-1)=0.407, the observed TI rate (§19)
    -- which reproduces §16's simulated 2.42 games per series. */
-const SERIES_OPTS=[4,5,6], SERIES_DEF=5, KEEP_SERIES=2, P_THIRD=0.407;
+const SERIES_OPTS=[4,5,6], SERIES_DEF=5, KEEP_SERIES=1, P_THIRD=0.407;
 const state={};
 ROLES.forEach(r=>state[r]={team:DEFAULTS[r].team,stats:DEFAULTS[r].stats.slice(),mult:[100,100,100],series:SERIES_DEF});
 
@@ -346,7 +346,7 @@ function run(){
     const c=Array.from(per[r]).sort((a,b)=>a-b); sorted[r]=c;
     const sub=document.getElementById("sub-"+r);
     const eff=state[r].stats.map(k=>{const c2=ladderOf(r,k,state[r].team); return c2?c2.e:0;});
-    sub.innerHTML=`expected <b>${fmt(mean(per[r]))}</b> over ${state[r].series} series, best 2 kept`+
+    sub.innerHTML=`expected <b>${fmt(mean(per[r]))}</b> over ${state[r].series} series, best ${KEEP_SERIES} kept`+
       `<br>p10 ${fmt(quant(c,0.10))} &nbsp; p50 ${fmt(quant(c,0.50))} &nbsp; p90 ${fmt(quant(c,0.90))}<br>run-up games behind it: ${Math.min(...eff)}`;
   });
   const tot=new Float64Array(N);
@@ -363,8 +363,8 @@ function run(){
     `chance of clearing <b>${fmt(target)}</b><br>`+
     `expected total <b>${fmt(m)}</b><br>`+
     `p10 <b>${fmt(quant(st,0.10))}</b> &nbsp; median <b>${fmt(quant(st,0.50))}</b> &nbsp; p90 <b>${fmt(quant(st,0.90))}</b><br>`+
-    `${ROLES.map(r=>r+" "+state[r].series).join(" &nbsp; ")} series &nbsp;&middot;&nbsp; best 2 games of each, best 2 series kept<br>`+
-    `typical kept series: ${fmt(quant(st,0.5)/(2*ROLES.length))} per banner-series`;
+    `${ROLES.map(r=>r+" "+state[r].series).join(" &nbsp; ")} series &nbsp;&middot;&nbsp; best 2 games of each, best ${KEEP_SERIES} series kept<br>`+
+    `typical kept series: ${fmt(quant(st,0.5)/(KEEP_SERIES*ROLES.length))} per banner-series`;
   drawHist(st,target,m);
   drawBoard();
 }

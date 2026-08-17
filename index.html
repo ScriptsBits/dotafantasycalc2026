@@ -369,6 +369,7 @@ const NS = "http://www.w3.org/2000/svg";
 const cv = n => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
 const el = (t,a,p)=>{const n=document.createElementNS(NS,t); for(const k in a) n.setAttribute(k,a[k]); if(p)p.appendChild(n); return n;};
 const fmt = v => Math.round(v).toLocaleString("en-US");
+const ROLES=["Core","Mid","Support"];
 const D2 = JSON.parse(document.getElementById("calcdata2").textContent);
 
 /* Two contest stages, two datasets.
